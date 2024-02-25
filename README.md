@@ -1,5 +1,4 @@
 # FrostBit
-----
 FrostBit is a distributed unique ID generator inspired by [Twitter's Snowflake](https://blog.twitter.com/2010/announcing-snowflake).
 
 FrostBit focuses on lifetime and performance on many host/core environment. So it has a different bit assignment from Snowflake. A FrostBit ID is composed of
@@ -18,6 +17,5 @@ As a result, FrostBit has the following advantages and disadvantages:
 However, if you want more generation rate in a single host, you can easily run multiple FrostBit ID generators concurrently.
 
 ## License
-----
 The MIT License (MIT)
 See [LICENSE](https://github.com/sony/sonyflake/blob/master/LICENSE) for details.
