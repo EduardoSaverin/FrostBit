@@ -11,14 +11,14 @@ ERR_NO_PRIVATE_ADDRESS = "no private ip address"
 ERR_OVER_TIME_LIMIT = "over the time limit"
 ERR_INVALID_MACHINE_ID = "invalid machine id"
 
-# Constants for Sonyflake time unit (10 msec in nanoseconds)
-SONYFLAKE_TIME_UNIT = 1e7
+# Constants for frostbit time unit (10 msec in nanoseconds)
+FROSTBIT_TIME_UNIT = 1e7
 
-# Default start time for Sonyflake (Monday, 1 January 2024 12:00:00 AM)
+# Default start time for frostbit (Monday, 1 January 2024 12:00:00 AM)
 DEFAULT_START_TIME = 1704067200000
 
 
-class Sonyflake:
+class FrostBit:
     def __init__(self, start_time=DEFAULT_START_TIME, machine_id=None):
         self.mutex = None
         self.start_time = start_time
@@ -34,17 +34,17 @@ class Sonyflake:
             self.sequence = 0
         else:
             self.sequence = (self.sequence + 1) & mask_sequence
-            if self.sequence == 0:
+            if self.sequence == 0: # Reached max sequence
                 self.elapsed_time += 1
                 overtime = self.elapsed_time - current
                 time.sleep(self.sleep_time(overtime))
         return self.to_id()
 
     def current_elapsed_time(self):
-        return self.to_sonyflake_time(time.time() * 1000) - self.start_time
+        return self.to_frostbit_time(time.time() * 1000) - self.start_time
 
     def sleep_time(self, overtime):
-        return (overtime * SONYFLAKE_TIME_UNIT) - (int(time.time() * 1000) % SONYFLAKE_TIME_UNIT)
+        return (overtime * FROSTBIT_TIME_UNIT) - (int(time.time() * 1000) % FROSTBIT_TIME_UNIT)
 
     def to_id(self):
         if self.elapsed_time >= (1 << BIT_LEN_TIME):
@@ -54,8 +54,8 @@ class Sonyflake:
                (self.sequence << BIT_LEN_MACHINE_ID) | \
                self.machine_id
 
-    def to_sonyflake_time(self, t):
-        return int(t / SONYFLAKE_TIME_UNIT)
+    def to_frostbit_time(self, t):
+        return int(t / FROSTBIT_TIME_UNIT)
 
     def lower_16_bit_private_ip(self):
         ip = self.private_ipv4()
@@ -64,8 +64,8 @@ class Sonyflake:
         return (ip[2] << 8) + ip[3]
 
     @staticmethod
-    def sonyflake_time_unit():
-        return SONYFLAKE_TIME_UNIT
+    def frostbit_time_unit():
+        return FROSTBIT_TIME_UNIT
 
     @staticmethod
     def private_ipv4():
@@ -79,6 +79,6 @@ class Sonyflake:
         return None
 
 if __name__ == "__main__":
-    sonyflake = Sonyflake()
+    frostbit = FrostBit()
     for _ in range(5):
-        print("Generated ID:", sonyflake.next_id())
+        print("Generated ID:", frostbit.next_id())
